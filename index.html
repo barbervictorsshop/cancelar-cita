@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cancelar cita</title>
+</head>
+
+<body style="font-family: Arial, sans-serif; text-align:center; padding:40px;">
+
+  <h2>Cancelar cita</h2>
+  <p>Pulsa el botón para confirmar la cancelación de tu cita.</p>
+
+  <button id="btn"
+    style="padding:15px 25px;
+           background:#d32f2f;
+           color:white;
+           font-size:18px;
+           border:none;
+           border-radius:6px;
+           cursor:pointer;">
+    Confirmar cancelación
+  </button>
+
+  <p id="msg" style="margin-top:30px;font-size:18px;"></p>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const eventId = params.get("eventId");
+
+  const scriptUrl = "https://script.google.com/macros/s/AKfycbxtexi8x-A3KVmFc5YvhxQ6HKx8IAgrb9tLy3cjkk4gHMbrJ9hngqvFpxbrRone5bEVnw/exec";
+
+  const btn = document.getElementById("btn");
+  const msg = document.getElementById("msg");
+
+  btn.addEventListener("click", async () => {
+    btn.disabled = true;
+    btn.innerText = "Cancelando...";
+
+    try {
+      await fetch(
+        scriptUrl + "?eventId=" + encodeURIComponent(eventId),
+        { mode: "no-cors" }
+      );
+
+      // NO leemos respuesta → asumimos éxito
+      msg.innerHTML = "✅ Tu cita ha sido cancelada correctamente.";
+
+    } catch (e) {
+      // Esto solo fallará si NO se puede enviar la petición
+      msg.innerHTML = "❌ No se pudo cancelar la cita. Inténtalo de nuevo.";
+      btn.disabled = false;
+      btn.innerText = "Confirmar cancelación";
+    }
+  });
+</script>
+
+</body>
+</html>
